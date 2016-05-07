@@ -30,7 +30,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using SearchAThing.Core;
-using static SearchAThing.Sci.MUCollection;
 
 namespace SearchAThing.Sci.Examples
 {
@@ -45,18 +44,22 @@ namespace SearchAThing.Sci.Examples
         [DataMember]
         public double B;
 
-    };
+    };    
 
     class Program
-    {
+    {        
 
         static void Main(string[] args)
-        {            
+        {
+            var mm = MUCollection.Length.mm;
+            var m = MUCollection.Length.m;
+            var km = MUCollection.Length.km;
+
             var la = 2 * mm;
             var lb = 5 * m;
             var lc = 2.4 * km;
 
-            var km_to_m = Length.ConvertFactor(km, m);
+            var km_to_m = PQCollection.Length.ConvertFactor(km, m);
 
             // write a project to xml
             {
