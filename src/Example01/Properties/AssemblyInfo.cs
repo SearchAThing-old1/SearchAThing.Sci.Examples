@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SearchAThing.Sci.Examples")]
-[assembly: AssemblyDescription("Examples for the SearchAThing.Sci library.")]
+[assembly: AssemblyTitle("SearchAThing.Sci.Examples.Example01")]
+[assembly: AssemblyDescription("SearchAThing.Sci.Examples - Example01")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SearchAThing.Sci.Examples")]
+[assembly: AssemblyProduct("SearchAThing.Sci.Examples.Example01")]
 [assembly: AssemblyCopyright("Copyright © Lorenzo Delana 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("91735ff3-d2e5-43f4-8f44-6f6805066626")]
+[assembly: Guid("3f3576f7-2799-4b41-af97-3776c2dd3ae4")]
 
 // Version information for an assembly consists of the following four values:
 //

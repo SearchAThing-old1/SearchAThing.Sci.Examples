@@ -38,49 +38,50 @@ namespace SearchAThing.Sci.Examples
     class SampleProject : Project
     {
 
-        [DataMember]
-        public double A;
+        public SampleProject(MUDomain mud) : base(mud)
+        {
+
+        }
 
         [DataMember]
-        public double B;
+        public double offset;
 
-    };    
+        [DataMember]
+        public double force;
+
+    };
 
     class Program
-    {        
+    {
 
         static void Main(string[] args)
         {
-            var mm = MUCollection.Length.mm;
-            var m = MUCollection.Length.m;
-            var km = MUCollection.Length.km;
+            var binary = false;
+            var mud = new MUDomain();
 
-            var la = 2 * mm;
-            var lb = 5 * m;
-            var lc = 2.4 * km;
-
-            var km_to_m = PQCollection.Length.ConvertFactor(km, m);
+            var offset = .12 * MUCollection.Length.m;
+            var force = 1e-3 * MUCollection.Force.kN;
 
             // write a project to xml
             {
-                var binary = false;
-                var knownTypes = new List<Type>() { typeof(Project), typeof(SampleProject) };
+                var knownTypes = new List<Type>() { typeof(SampleProject) };
 
                 {
-                    var prj = new SampleProject();
-                    prj.A = 1;
-                    prj.B = 22;
+                    var prj = new SampleProject(mud);
+                    prj.offset = offset.ConvertTo(mud).Value; // implicitly mud.Length.mu
+                    prj.force = force.ConvertTo(mud).Value; // implicitly mud.Force.mu
                     prj.Save("test.xml", binary, knownTypes);
                 }
-
-                {
-                    var prj = "test.xml".Deserialize<SampleProject>(binary, knownTypes);
-                    Console.WriteLine($"prj read back data A={prj.A} B={prj.B}");
-                }
-
             }
 
-        }
+            // read back xml data
+            {
+                var prj = "test.xml".Deserialize<SampleProject>(binary);
+                Console.WriteLine($"prj read back data");
+                Console.WriteLine($"offset={prj.offset}{prj.MUDomain.Length.MU} force={prj.force}{prj.MUDomain.Force.MU}");
+            }
+
+        }      
 
     }
 

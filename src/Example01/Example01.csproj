@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{91735FF3-D2E5-43F4-8F44-6F6805066626}</ProjectGuid>
+    <ProjectGuid>{3F3576F7-2799-4B41-AF97-3776C2DD3AE4}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SearchAThing.Sci.Examples</RootNamespace>
-    <AssemblyName>SearchAThing.Sci.Examples</AssemblyName>
+    <AssemblyName>SearchAThing.Sci.Examples.Example01</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -51,11 +51,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SearchAThing.Core\src\SearchAThing.Core.csproj">
+    <ProjectReference Include="..\..\..\SearchAThing.Core\src\SearchAThing.Core.csproj">
       <Project>{8162a30e-a46d-4a78-ba12-1f376ac6f1b4}</Project>
       <Name>SearchAThing.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\SearchAThing.Sci\src\SearchAThing.Sci.csproj">
+    <ProjectReference Include="..\..\..\SearchAThing.Sci\src\SearchAThing.Sci.csproj">
       <Project>{f9d7f0ee-d4ff-4455-87be-08539d2d1982}</Project>
       <Name>SearchAThing.Sci</Name>
     </ProjectReference>
