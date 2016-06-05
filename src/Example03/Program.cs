@@ -26,15 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using SearchAThing.Core;
 using netDxf;
 using System.Diagnostics;
 using MIConvexHull;
-using netDxf;
 using netDxf.Entities;
+using System.Globalization;
+using static System.Math;
+using SearchAThing.Sci.Examples;
+using netDxf.Tables;
 
 namespace SearchAThing.Sci.Examples
 {
@@ -42,40 +41,90 @@ namespace SearchAThing.Sci.Examples
     class Program
     {
 
+        static int IsLeft(Vector3D a, Vector3D b, Vector3D c)
+        {
+            return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0 ? 1 : -1;
+        }
+
+        enum SimulType { Regular, Random };
+
         static void Main(string[] args)
         {
+            var tol = 1e-3;
+
+            var vs = Vector3D.From2DCoords(138.057658280273, 311.253742925475,
+                262.868103460813, 203.998850055038,
+                19.0415792255856, 252.148940345342,
+                310.67393431937, 107.172264068933,
+                389.416187950138, 373.369659238201,
+                121.334824534755, 77.27920174472,
+                446.644815125803, 438.541181124067,
+                492.844538294172, 108.737732800067,
+                452.47291934326, 265.714573564806,
+                254.554713496265, 64.5225288181205).ToList();
+
+            var mesh2d = new Mesh2D(1e-2, vs, Vector3D.From2DCoords(
+                -45, -45,
+                550, -45,
+                550, 550,
+                -45, 550
+                ));
+
+            // draw
+
             var dxf = new DxfDocument();
+            EntityObject eo = null;
 
-            var rnd = new Random();
-            var vs = new List<Vertex>();
+            const double origPointRadius = 5;
+            const double convexPointRadius = 10;
+            var layerOrigPoints = new Layer("orig_points") { Color = AciColor.Magenta };
+            var layerConvexPoints = new Layer("convex_points") { Color = AciColor.Cyan };
+            var layerMeshPoly = new Layer("mesh_poly") { Color = AciColor.DarkGray };
+            var layerClosureLines = new Layer("closure") { Color = AciColor.Red };
+            var layerTriangles = new Layer("triangles") { Color = AciColor.Blue };
+            var layerBoundary = new Layer("bounday") { Color = AciColor.Yellow };
 
-            netDxf.Entities.EntityObject eo = null;
-
-            for (int i = 0; i < 1000; ++i)
+            // draw orig points with mesh
+            foreach (var p in vs)
             {
-                var v = new Vertex(new Vector3D(rnd.NextDouble() * 1000, rnd.NextDouble() * 1000, 0));
-                vs.Add(v);
-                dxf.AddEntity(eo = new Circle(v.V.ToVector3(), 1));
-                eo.Color = AciColor.Magenta;
+                dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                eo.Layer = layerOrigPoints;
+
+                var poly = mesh2d.VectorToPoly(p);
+                if (poly != null)
+                {
+                    dxf.AddEntity(eo = poly.ToLwPolyline(tol));
+                    eo.Layer = layerMeshPoly;
+                }
             }
 
-            var config = new TriangulationComputationConfig
+            // draw convex hull
+            foreach (var p in mesh2d.ConvexHull)
             {
-                PointTranslationType = PointTranslationType.TranslateInternal,
-                PlaneDistanceTolerance = 1e-6,
-                PointTranslationGenerator = TriangulationComputationConfig.RandomShiftByRadius(1e-6, 0)
-            };
-
-            var voronoiMesh = VoronoiMesh.Create<Vertex, Cell>(vs, config);            
-
-            foreach (var edge in voronoiMesh.Edges)
-            {
-                var from = edge.Source.Vertices.Select(w => w.V).CircleBy3Points();
-                var to = edge.Target.Vertices.Select(w => w.V).CircleBy3Points();
-
-                dxf.AddEntity(eo = new Line { StartPoint = from.Center.ToVector3(), EndPoint = to.Center.ToVector3() });
+                dxf.AddEntity(eo = new Circle(p.ToVector3(), convexPointRadius));
+                eo.Layer = layerConvexPoints;
             }
-            
+
+            // draw closure lines
+            foreach (var s in mesh2d.Closures)
+            {
+                dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
+                eo.Layer = layerClosureLines;
+            }
+
+            // draw voronoi triangles
+            foreach (var t in mesh2d.Triangles)
+            {
+                dxf.AddEntity(eo = t.ToLwPolyline(tol));
+                eo.Layer = layerTriangles;
+            }
+
+            // draw boundary
+            dxf.AddEntity(eo = mesh2d.Boundary.ToLwPolyline(tol));
+            eo.Layer = layerBoundary;
+
+            dxf.Viewport.ShowGrid = false;
+
             dxf.Save("test.dxf");
 
             Process.Start("test.dxf");
@@ -102,12 +151,20 @@ namespace SearchAThing.Sci.Examples
                 return _position;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "({0},{1})", V.X, V.Y);
+        }
     }
 
     public class Cell : TriangulationCell<Vertex, Cell>
     {
 
-
+        public override string ToString()
+        {
+            return string.Format($"cvs={Vertices[0].ToString()} {Vertices[1].ToString()} {Vertices[2].ToString()}");
+        }
 
     }
 
