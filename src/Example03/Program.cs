@@ -39,14 +39,7 @@ namespace SearchAThing.Sci.Examples
 {
 
     class Program
-    {
-
-        static int IsLeft(Vector3D a, Vector3D b, Vector3D c)
-        {
-            return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0 ? 1 : -1;
-        }
-
-        enum SimulType { Regular, Random };
+    {               
 
         static void Main(string[] args)
         {
