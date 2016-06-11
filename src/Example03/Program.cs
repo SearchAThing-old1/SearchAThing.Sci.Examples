@@ -34,87 +34,166 @@ using System.Globalization;
 using static System.Math;
 using SearchAThing.Sci.Examples;
 using netDxf.Tables;
+using SearchAThing;
 
 namespace SearchAThing.Sci.Examples
 {
 
     class Program
-    {               
+    {
 
         static void Main(string[] args)
         {
-            var tol = 1e-3;
+            const double tol = 1e-3;
 
-            var vs = Vector3D.From2DCoords(138.057658280273, 311.253742925475,
-                262.868103460813, 203.998850055038,
-                19.0415792255856, 252.148940345342,
-                310.67393431937, 107.172264068933,
-                389.416187950138, 373.369659238201,
-                121.334824534755, 77.27920174472,
-                446.644815125803, 438.541181124067,
-                492.844538294172, 108.737732800067,
-                452.47291934326, 265.714573564806,
-                254.554713496265, 64.5225288181205).ToList();
+            const int N = 500; // nr. of points
+            const double W = 2000; // ellipse width
+            const double H = 1000; // ellipse height
+            const double boundaryPaddingPercent = 0;
+            const double ellipseFlatness = .1; // ellipse polygonalized flatness
+            var origin = Vector3D.Zero;// new Vector3D(400, 200, 0);
 
-            var mesh2d = new Mesh2D(1e-2, vs, Vector3D.From2DCoords(
-                -45, -45,
-                550, -45,
-                550, 550,
-                -45, 550
-                ));
+            const double origPointRadius = 1;
+            const double boundarySplitPtRadius = 1;
+            const double convexPointRadius = 2;
+            const double failedPointRadius = 4;
 
-            // draw
+            var boundary = Polygon.EllipseToPolygon2D(origin, W, H, ellipseFlatness).ToList();
+
+            var rndPts = Vector3D.Random(N,
+                (-W / 2) * (1 - boundaryPaddingPercent), (W / 2) * (1 - boundaryPaddingPercent), // xrange
+                (-H / 2) * (1 - boundaryPaddingPercent), (H / 2) * (1 - boundaryPaddingPercent), // yrange
+                0, 0, // zrange
+                seed: 2)
+                .Select(v => v + origin)
+                .ToList();
+
+            var vs = rndPts
+                .Where(v => boundary.ContainsPoint(tol, v))
+                .ToList();
 
             var dxf = new DxfDocument();
             EntityObject eo = null;
 
-            const double origPointRadius = 5;
-            const double convexPointRadius = 10;
+            var disableBoundary = false; // TO TEST
+
+            var layerAllRndPoints = new Layer("all_rnd_points") { Color = AciColor.DarkGray, IsVisible = false };
             var layerOrigPoints = new Layer("orig_points") { Color = AciColor.Magenta };
             var layerConvexPoints = new Layer("convex_points") { Color = AciColor.Cyan };
             var layerMeshPoly = new Layer("mesh_poly") { Color = AciColor.DarkGray };
-            var layerClosureLines = new Layer("closure") { Color = AciColor.Red };
+            var layerMeshPolyCv = new Layer("mesh_poly_cv") { Color = AciColor.DarkGray };
+            var layerClosureLines = new Layer("closure") { Color = AciColor.Red, IsVisible = disableBoundary };
             var layerTriangles = new Layer("triangles") { Color = AciColor.Blue };
-            var layerBoundary = new Layer("bounday") { Color = AciColor.Yellow };
+            var layerBoundary = new Layer("bounday") { Color = AciColor.Yellow, IsVisible = !disableBoundary };
+            var layerAllSegs = new Layer("all_segs") { Color = AciColor.Green, IsVisible = !disableBoundary };
+            var layerPtFailed = new Layer("pt_failed") { Color = AciColor.Yellow };
 
-            // draw orig points with mesh
-            foreach (var p in vs)
+            if (vs.Count > 0)
             {
-                dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
-                eo.Layer = layerOrigPoints;
+                var failedPoints = new List<Vector3D>();
 
-                var poly = mesh2d.VectorToPoly(p);
-                if (poly != null)
+                var mesh2d = new Mesh2D(1e-2, vs, boundary, failedPoints,
+                     // default 10
+                     boundaryPolyIntersectToleranceFactor: 10,
+
+                     // default: 1e-1
+                     boundaryPolyBooleanMapToleranceFactor: 1e-1,
+
+                     // default: 1
+                     closedPolyToleranceFactor: 2,
+
+                     disableBoundary: disableBoundary
+                     );
+
+                var layerBoundarySplitPts = new Layer("boundary_split") { Color = AciColor.Red, IsVisible = failedPoints.Count > 0 };
+                if (failedPoints.Count > 0) layerClosureLines.IsVisible = true;
+
+                // draw orig points with mesh
+                foreach (var p in vs)
                 {
-                    dxf.AddEntity(eo = poly.ToLwPolyline(tol));
-                    eo.Layer = layerMeshPoly;
+                    dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                    eo.Layer = layerOrigPoints;
+
+                    var poly = mesh2d.PointToPoly(p);
+                    if (poly != null)
+                    {
+                        dxf.AddEntity(eo = poly.Poly.ToLwPolyline(tol));
+                        if (poly.PointIsConvexHull)
+                            eo.Layer = layerMeshPolyCv;
+                        else
+                            eo.Layer = layerMeshPoly;
+                    }
+                }
+
+                // draw convex hull
+                foreach (var p in mesh2d.ConvexHull)
+                {
+                    dxf.AddEntity(eo = new Circle(p.ToVector3(), convexPointRadius));
+                    eo.Layer = layerConvexPoints;
+                }
+
+                // draw failed pts
+                foreach (var p in failedPoints)
+                {
+                    dxf.AddEntity(eo = new Circle(p.ToVector3(), failedPointRadius));
+                    eo.Layer = layerPtFailed;
+                }
+
+                // draw boundary split pts
+                foreach (var p in mesh2d.BoundarySplitPts)
+                {
+                    dxf.AddEntity(eo = new Circle(p.ToVector3(), boundarySplitPtRadius));
+                    eo.Layer = layerBoundarySplitPts;
+                }
+
+                // draw closure lines
+                foreach (var s in mesh2d.Closures)
+                {
+                    dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
+                    eo.Layer = layerClosureLines;
+                }
+
+                // draw voronoi triangles
+                foreach (var t in mesh2d.Triangles)
+                {
+                    dxf.AddEntity(eo = t.ToLwPolyline(tol));
+                    eo.Layer = layerTriangles;
+                }
+
+                // draw all segs
+                foreach (var s in mesh2d.AllSegs)
+                {
+                    dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
+                    eo.Layer = layerAllSegs;
                 }
             }
-
-            // draw convex hull
-            foreach (var p in mesh2d.ConvexHull)
+            else
             {
-                dxf.AddEntity(eo = new Circle(p.ToVector3(), convexPointRadius));
-                eo.Layer = layerConvexPoints;
+                // draw orig points with mesh
+                foreach (var p in vs)
+                {
+                    dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                    eo.Layer = layerOrigPoints;
+                }
+
+                layerAllRndPoints.IsVisible = true;
             }
 
-            // draw closure lines
-            foreach (var s in mesh2d.Closures)
+            // draw all rnd points
+            foreach (var p in rndPts)
             {
-                dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
-                eo.Layer = layerClosureLines;
-            }
-
-            // draw voronoi triangles
-            foreach (var t in mesh2d.Triangles)
-            {
-                dxf.AddEntity(eo = t.ToLwPolyline(tol));
-                eo.Layer = layerTriangles;
+                dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                eo.Layer = layerAllRndPoints;
             }
 
             // draw boundary
-            dxf.AddEntity(eo = mesh2d.Boundary.ToLwPolyline(tol));
+            dxf.AddEntity(eo = boundary.ToLwPolyline(tol));
             eo.Layer = layerBoundary;
+
+            // setup layers
+            //dxf.Layers.Foreach(w => w.IsVisible = false);
+            //layerAllSegs.IsVisible = true;
+            layerAllSegs.IsVisible = false;
 
             dxf.Viewport.ShowGrid = false;
 
