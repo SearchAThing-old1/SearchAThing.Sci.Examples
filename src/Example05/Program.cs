@@ -42,8 +42,7 @@ namespace SearchAThing.Sci.Examples
 
         static void Main(string[] args)
         {
-            var dxf = new DxfDocument();
-            EntityObject eo = null;
+            var dxf = new DxfDocument();            
 
             const double ptsize = .2;
             const int N = 30000;
