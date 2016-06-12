@@ -12,7 +12,7 @@ Examples for SearchAThing.Sci
 
 ## Mesh2d, Voronoi, Convex hull
 - [Example03](/src/Example03/Program.cs) : create a mesh2d given some input points
-![img](https://github.com/devel0/SearchAThing.Sci/blob/master/doc/images/Mesh2D_example03.PNG)
+![img](/doc/Example03.png)
 
 ## PythonWrapper
 - [Example04](/src/Example04/Program.cs) : invoke python using PythonWrapper helper
@@ -65,4 +65,9 @@ Second execution 00:00:00.0014885
 **Missing Features**
 - parsing output data
 
+## Discrete space
+- [Example05](/src/Example05/Program.cs) : create a sample space and query for items in it
+![img](/doc/Example05_01.png)
+![img](/doc/Example05_02.png)
+![img](/doc/Example05_03.png)
 
