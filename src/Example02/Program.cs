@@ -25,11 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using SearchAThing.Core;
 
 namespace SearchAThing.Sci.Examples
 {
@@ -76,12 +72,12 @@ namespace SearchAThing.Sci.Examples
 
             // read back xml data
             {
-                var prj = "test.xml".Deserialize<SampleProject>(binary);
+                var prj = "test.xml".DeserializeFile<SampleProject>(binary);
                 Console.WriteLine($"prj read back data");
                 Console.WriteLine($"offset={prj.offset}{prj.MUDomain.Length.MU} force={prj.force}{prj.MUDomain.Force.MU}");
             }
 
-        }      
+        }
 
     }
 

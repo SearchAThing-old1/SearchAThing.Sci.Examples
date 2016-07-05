@@ -75,7 +75,7 @@ namespace SearchAThing.Sci.Examples
 
             // read from xml
             {
-                var prj = "test.xml".Deserialize<SampleProject>(binary);
+                var prj = "test.xml".DeserializeFile<SampleProject>(binary);
                 Console.WriteLine($"prj read back data");
                 Console.WriteLine($"offset={prj.Offset} force={prj.Force}");
             }
