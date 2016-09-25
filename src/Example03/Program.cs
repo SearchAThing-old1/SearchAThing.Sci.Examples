@@ -111,7 +111,7 @@ namespace SearchAThing.Sci.Examples
                 // draw orig points with mesh
                 foreach (var p in vs)
                 {
-                    dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                    dxf.AddEntity(eo = new Circle(p, origPointRadius));
                     eo.Layer = layerOrigPoints;
 
                     var poly = mesh2d.PointToPoly(p);
@@ -128,28 +128,28 @@ namespace SearchAThing.Sci.Examples
                 // draw convex hull
                 foreach (var p in mesh2d.ConvexHull)
                 {
-                    dxf.AddEntity(eo = new Circle(p.ToVector3(), convexPointRadius));
+                    dxf.AddEntity(eo = new Circle(p, convexPointRadius));
                     eo.Layer = layerConvexPoints;
                 }
 
                 // draw failed pts
                 foreach (var p in failedPoints)
                 {
-                    dxf.AddEntity(eo = new Circle(p.ToVector3(), failedPointRadius));
+                    dxf.AddEntity(eo = new Circle(p, failedPointRadius));
                     eo.Layer = layerPtFailed;
                 }
 
                 // draw boundary split pts
                 foreach (var p in mesh2d.BoundarySplitPts)
                 {
-                    dxf.AddEntity(eo = new Circle(p.ToVector3(), boundarySplitPtRadius));
+                    dxf.AddEntity(eo = new Circle(p, boundarySplitPtRadius));
                     eo.Layer = layerBoundarySplitPts;
                 }
 
                 // draw closure lines
                 foreach (var s in mesh2d.Closures)
                 {
-                    dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
+                    dxf.AddEntity(eo = new Line(s.From, s.To));
                     eo.Layer = layerClosureLines;
                 }
 
@@ -163,7 +163,7 @@ namespace SearchAThing.Sci.Examples
                 // draw all segs
                 foreach (var s in mesh2d.AllSegs)
                 {
-                    dxf.AddEntity(eo = new Line(s.From.ToVector3(), s.To.ToVector3()));
+                    dxf.AddEntity(eo = new Line(s.From, s.To));
                     eo.Layer = layerAllSegs;
                 }
             }
@@ -172,7 +172,7 @@ namespace SearchAThing.Sci.Examples
                 // draw orig points with mesh
                 foreach (var p in vs)
                 {
-                    dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                    dxf.AddEntity(eo = new Circle(p, origPointRadius));
                     eo.Layer = layerOrigPoints;
                 }
 
@@ -182,7 +182,7 @@ namespace SearchAThing.Sci.Examples
             // draw all rnd points
             foreach (var p in rndPts)
             {
-                dxf.AddEntity(eo = new Circle(p.ToVector3(), origPointRadius));
+                dxf.AddEntity(eo = new Circle(p, origPointRadius));
                 eo.Layer = layerAllRndPoints;
             }
 
