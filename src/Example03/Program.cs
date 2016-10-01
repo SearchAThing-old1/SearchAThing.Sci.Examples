@@ -117,7 +117,7 @@ namespace SearchAThing.Sci.Examples
                     var poly = mesh2d.PointToPoly(p);
                     if (poly != null)
                     {
-                        dxf.AddEntity(eo = poly.Poly.ToLwPolyline(tol));
+                        dxf.AddEntity(eo = poly.Poly.ToLwPolyline());
                         if (poly.PointIsConvexHull)
                             eo.Layer = layerMeshPolyCv;
                         else
@@ -156,7 +156,7 @@ namespace SearchAThing.Sci.Examples
                 // draw voronoi triangles
                 foreach (var t in mesh2d.Triangles)
                 {
-                    dxf.AddEntity(eo = t.ToLwPolyline(tol));
+                    dxf.AddEntity(eo = t.ToLwPolyline());
                     eo.Layer = layerTriangles;
                 }
 
@@ -187,7 +187,7 @@ namespace SearchAThing.Sci.Examples
             }
 
             // draw boundary
-            dxf.AddEntity(eo = boundary.ToLwPolyline(tol));
+            dxf.AddEntity(eo = boundary.ToLwPolyline());
             eo.Layer = layerBoundary;
 
             // setup layers

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using SearchAThing;
 
 namespace SearchAThing.Sci.Examples
 {

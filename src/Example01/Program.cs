@@ -30,6 +30,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using SearchAThing.Core;
+using SearchAThing;
 
 namespace SearchAThing.Sci.Examples
 {

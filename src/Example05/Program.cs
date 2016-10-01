@@ -33,6 +33,7 @@ using netDxf.Header;
 using SearchAThing;
 using static System.Math;
 using netDxf.Tables;
+using SearchAThing;
 
 namespace SearchAThing.Sci.Examples
 {
