@@ -66,6 +66,7 @@ namespace SearchAThing.Sci.Examples
                     var prj = new SampleProject(mud);
                     prj.offset = offset.ConvertTo(mud).Value; // implicitly mud.Length.mu
                     prj.force = force.ConvertTo(mud).Value; // implicitly mud.Force.mu
+                    // TO FIX
                     prj.Save("test.xml", binary, knownTypes);
                 }
             }

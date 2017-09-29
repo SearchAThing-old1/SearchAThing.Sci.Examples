@@ -25,6 +25,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SearchAThing.Sci.Examples
@@ -33,60 +34,56 @@ namespace SearchAThing.Sci.Examples
     class Program
     {
 
-        static void Main(string[] args)
+        static void _Main(string[] args)
         {
-            Task.Run(async () =>
-            {
-                var src = @"import numpy as np
-np.mgrid[0:5,0:5]";
+            const string python_imports = @"
+import numpy as np
+";
 
-                var python = new PythonWrapper();
+            var sb = new StringBuilder();
+            sb.AppendLine("print(np.mgrid[0:5,0:5])");
 
-                python.Start();
+            var python = new PythonPipe(python_imports);
 
-                python.Write(src);
+            var res = python.Exec(sb.ToStringWrapper());
 
-                var res = await python.Read();
+            Console.WriteLine($"Execution of [{sb}] result in follow\r\n{res}");
 
-                Console.WriteLine($"Execution of [{src}] result in follow\r\n{res}");
-            }).Wait();
+            python.Dispose();
         }
 
         /// <summary>
         /// test speed
         /// </summary>        
-        static void _Main(string[] args)
+        static void Main(string[] args)
         {
-            Task.Run(async () =>
+            const string python_imports = @"
+import numpy as np
+";
+
+            var src = @"print(np.mgrid[0:5,0:5])";
+
+            var python = new PythonPipe(python_imports);
+
+            var sw = new Stopwatch();
+            sw.Start();
             {
-                var src = @"import numpy as np
-np.mgrid[0:5,0:5]";
+                var res = python.Exec(new StringWrapper() { str = src });
+            }
+            sw.Stop();
+            Console.WriteLine($"First execution {sw.Elapsed}");
 
-                var python = new PythonWrapper();
+            //python.Recycle();
 
-                var sw = new Stopwatch();
-                sw.Start();
-                {
-                    python.Start();
+            sw.Reset();
+            sw.Start();
+            {
+                var res = python.Exec(new StringWrapper() { str = src });
+            }
+            sw.Stop();
+            Console.WriteLine($"Second execution {sw.Elapsed}");
 
-                    python.Write(src);
-
-                    var res = await python.Read();
-                }
-                sw.Stop();
-                Console.WriteLine($"First execution {sw.Elapsed}");
-
-                //python.Recycle();
-
-                sw.Reset();
-                sw.Start();
-                {
-                    python.Write(src);
-                    var res = await python.Read();
-                }
-                sw.Stop();
-                Console.WriteLine($"Second execution {sw.Elapsed}");                
-            }).Wait();
+            python.Dispose();
         }
 
     }

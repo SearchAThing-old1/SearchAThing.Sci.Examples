@@ -1,4 +1,4 @@
-﻿#region SearchAThing.Sci, Copyright(C) 2016 Lorenzo Delana, License under MIT
+﻿#region SearchAThing.Sci, Copyright(C) 2016-2017 Lorenzo Delana, License under MIT
 /*
 * The MIT License(MIT)
 * Copyright(c) 2016 Lorenzo Delana, https://searchathing.com
@@ -25,6 +25,7 @@
 
 using System;
 using SearchAThing;
+using System.Linq;
 using netDxf;
 using System.Diagnostics;
 using netDxf.Entities;
@@ -47,9 +48,9 @@ namespace SearchAThing.Sci.Examples
             
             dxf.AddEntity(line1.ToLine().SetColor(AciColor.Red));
             dxf.AddEntity(line2.ToLine().SetColor(AciColor.Red));
-            
+
             // build circle tangent line1,line2 (between line1-line2) through given point pt contained in line1 or line2
-            var c = new Circle3D(1e-4, line1, line2, pt);            
+            var c = Circle3D.CirclesTan12P(1e-4, line1, line2, pt).First();
             dxf.AddEntity(new Circle(c.CS.Origin, c.Radius).SetColor(AciColor.Yellow));
 
             dxf.Viewport.ShowGrid = false;
