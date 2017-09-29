@@ -11,13 +11,16 @@ in order to build successfully its suggested to clone follow repository [SearchA
 
 [Unit Tests](https://github.com/devel0/SearchAThing.UnitTest/blob/master/src/Sci.cs) are a good source for misc samples.
 
-## Measure Unit
-- [Example01](/src/Example01/Program.cs) : create a sci project with two measure object inside it and serialize then read back from deserialized data. Here measure serialized contains value and measure unit. Use this type of solution if want to keep track of the measure unit ( eg. user interface )
-- [Example02](/src/Example02/Program.cs) : create a sci project with two measure object as double thus using a measure unit domain. Use this type of solution if want minimize file size ( eg. many data )
-
 ## Mesh2d, Voronoi, Convex hull
+- [Example08](/src/Example08/Program.cs) : create some random point island and compute quick (dummy) hull
+![img](/doc/Example08.PNG)
+
 - [Example03](/src/Example03/Program.cs) : create a mesh2d given some input points
 ![img](/doc/Example03.PNG)
+
+## Circle tan to 2 line and 1 pt
+- [Example07](/src/Example07/Program.cs)
+![img](/doc/Example07.PNG)
 
 ## PythonWrapper
 - [Example04](/src/Example04/Program.cs) : invoke python using PythonWrapper helper
@@ -25,21 +28,20 @@ Follow code
 ```csharp
 static void Main(string[] args)
 {
-    Task.Run(async () =>
-    {
-        var src = @"import numpy as np
-np.mgrid[0:5,0:5]";
+    const string python_imports = @"
+import numpy as np
+";
 
-        var python = new PythonWrapper();
+    var sb = new StringBuilder();
+    sb.AppendLine("print(np.mgrid[0:5,0:5])");
 
-        python.Start();
+    var python = new PythonPipe(python_imports);
 
-        python.Write(src);
+    var res = python.Exec(sb.ToStringWrapper());
 
-        var res = await python.Read();
+    Console.WriteLine($"Execution of [{sb}] result in follow\r\n{res}");
 
-        Console.WriteLine($"Execution of [{src}] result in follow\r\n{res}");
-    }).Wait();
+    python.Dispose();
 }
 ```
 produces this output:
@@ -63,12 +65,9 @@ Python interpreter can be instantiated one time and used at runtime through a pi
 A recycle method allow you to restart the process if you consider its internal memory growth too much.
 Follow test results on speed:
 ```
-First execution 00:00:00.2980056
-Second execution 00:00:00.0014885
+First execution 00:00:00.5451368
+Second execution 00:00:00.0486802
 ```
-
-**Missing Features**
-- parsing output data
 
 ## Discrete space
 - [Example05](/src/Example05/Program.cs) : create a sample space and query for items in it
@@ -76,3 +75,6 @@ Second execution 00:00:00.0014885
 ![img](/doc/Example05_02.PNG)
 ![img](/doc/Example05_03.PNG)
 
+## Measure Unit
+- [Example01](/src/Example01/Program.cs) : create a sci project with two measure object inside it and serialize then read back from deserialized data. Here measure serialized contains value and measure unit. Use this type of solution if want to keep track of the measure unit ( eg. user interface )
+- [Example02](/src/Example02/Program.cs) : create a sci project with two measure object as double thus using a measure unit domain. Use this type of solution if want minimize file size ( eg. many data )
