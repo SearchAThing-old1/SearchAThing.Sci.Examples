@@ -3,9 +3,10 @@
 Examples for SearchAThing.Sci
 
 ## Build
-
-There are many dependencies between projects in relative path directly from other source repositories,
-in order to build successfully its suggested to clone follow repository [SearchAThing](https://github.com/devel0/SearchAThing) containing all of them.
+- nuget feeds
+  - searchathing :`https://www.myget.org/F/searchathing-old1/api/v3/i-ndex.json`
+  - imagesharp : `https://www.myget.org/F/imagesharp/api/v3/index.json`
+- pre-release package : `SearchAThing.Sci`
 
 ## Unit Tests
 
