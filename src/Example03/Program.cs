@@ -89,7 +89,7 @@ namespace SearchAThing.Sci.Examples
 
             var bbox_rnd_inside = vs.BBox();
             bbox_rnd_inside.DrawCuboid(dxf, layerBboxInsidePoints);
-            var cxhull = vs.DummyConvexHull(tol);
+            var cxhull = vs.ConvexHull2D();
 
             // draw boundary
             dxf.AddEntity(boundary.ToLwPolyline(tol), layerBoundary);

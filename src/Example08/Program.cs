@@ -38,7 +38,7 @@ namespace SearchAThing.Sci.Examples
                 var bbox = pts.BBox();
                 bbox.DrawCuboid(doc, lay_bbox);
 
-                var hull = pts.DummyConvexHull(.1, debug: doc).PolygonSegments(.1);
+                var hull = pts.ConvexHull2D().PolygonSegments(.1);
                 foreach (var seg in hull)
                 {
                     doc.AddEntity(seg, lay_hull);
