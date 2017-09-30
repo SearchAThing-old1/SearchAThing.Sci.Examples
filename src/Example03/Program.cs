@@ -89,13 +89,13 @@ namespace SearchAThing.Sci.Examples
 
             var bbox_rnd_inside = vs.BBox();
             bbox_rnd_inside.DrawCuboid(dxf, layerBboxInsidePoints);
-            var cxhull = vs.DummyConvexHull(tol);
+            var xbpoly = vs.BPoly(tol);
 
             // draw boundary
             dxf.AddEntity(boundary.ToLwPolyline(tol), layerBoundary);
 
-            // draw convex hull
-            cxhull.PolygonSegments(tol).Foreach(w => dxf.AddEntity(w, layerConvexPoints));
+            // draw bounding poly
+            xbpoly.PolygonSegments(tol).Foreach(w => dxf.AddEntity(w, layerConvexPoints));
 
             dxf.Viewport.ShowGrid = false;
 

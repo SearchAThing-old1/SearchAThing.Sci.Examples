@@ -18,7 +18,7 @@ namespace SearchAThing.Sci.Examples
             var samples_cols = 10;
 
             var lay_bbox = new Layer("bbox") { Color = AciColor.Yellow };
-            var lay_hull = new Layer("hull") { Color = AciColor.Cyan };
+            var lay_bpoly = new Layer("bpoly") { Color = AciColor.Cyan };
 
             var rnd = new Random(0);
 
@@ -38,10 +38,10 @@ namespace SearchAThing.Sci.Examples
                 var bbox = pts.BBox();
                 bbox.DrawCuboid(doc, lay_bbox);
 
-                var hull = pts.DummyConvexHull(.1, debug: doc).PolygonSegments(.1);
+                var hull = pts.BPoly(.1, debug: doc).PolygonSegments(.1);
                 foreach (var seg in hull)
                 {
-                    doc.AddEntity(seg, lay_hull);
+                    doc.AddEntity(seg, lay_bpoly);
                 }
 
                 ++sc;
