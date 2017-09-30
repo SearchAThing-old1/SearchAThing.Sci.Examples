@@ -12,18 +12,18 @@ Examples for SearchAThing.Sci
 
 [Unit Tests](https://github.com/SearchAThing-old1/SearchAThing.Sci/tree/master/tests) are a good source for misc samples.
 
-## Dummy Convex Hull
+## Bounding Polygon
 
-I needed for a simple and safe algorithm to compute convex hull for a set of 2d points and tried with some advanced libraries that computes voronoi and convex hull for 2d and 3d too, but I found there was some lacks of features such a polygon reconstruction and some exceptions that makes this simple rule too complex for my need.
+I needed for a simple and safe algorithm to compute bouding polygon from a given set of 2d points, while convex hull given a level of detail not needed for the purpose of finding a minimum set of points that enclose input points.
 
 So I decided to build my own **dummy** convex hull algorithm which an implementation you can found [here](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/master/src/DummyConvexHull.cs).
 The implementation rely on functions from [SearchAThing.Sci](https://github.com/SearchAThing-old1/SearchAThing.Sci) libraries and basically it follows these steps:
-- [compute bounding box](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/30a2ab38662a8d0b75e1e78ecfec5da89cd25c5c/src/DummyConvexHull.cs#L66-L73) of input points
-- [assign input point to bbox side](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/30a2ab38662a8d0b75e1e78ecfec5da89cd25c5c/src/DummyConvexHull.cs#L75-L107), this will results in subgroup of points into each of 4 bbox faces and computing of perpendicular distance from each side
-- [choose winner points for each bbox side points](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/30a2ab38662a8d0b75e1e78ecfec5da89cd25c5c/src/DummyConvexHull.cs#L109-L167) by sweeping from extrema pivot points (those already contained on bbox segments) forward and backward keeping winner points ( those with less degree ) and adding them one by one for a subsequent analysis of extrema pivot points, now with these added
-- [glue extrema bbox side winner points together](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/30a2ab38662a8d0b75e1e78ecfec5da89cd25c5c/src/DummyConvexHull.cs#L169-L216) checking sequence order between bbox side by comparing the distance from the common side point to find in which direction traverse other side points to glue together within
+- [compute bounding box](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/956715f078ec598e2a4c972b63579aa18d130e2f/src/DummyConvexHull.cs#L66-L73) of input points
+- [assign input point to bbox side](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/956715f078ec598e2a4c972b63579aa18d130e2f/src/DummyConvexHull.cs#L75-L107), this will results in subgroup of points into each of 4 bbox faces and computing of perpendicular distance from each side
+- [choose winner points for each bbox side points](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/956715f078ec598e2a4c972b63579aa18d130e2f/src/DummyConvexHull.cs#L109-L167) by sweeping from extrema pivot points (those already contained on bbox segments) forward and backward keeping winner points ( those with less degree ) and adding them one by one for a subsequent analysis of extrema pivot points, now with these added
+- [glue extrema bbox side winner points together](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/956715f078ec598e2a4c972b63579aa18d130e2f/src/DummyConvexHull.cs#L169-L216) checking sequence order between bbox side by comparing the distance from the common side point to find in which direction traverse other side points to glue together within
 
-An optional debug parameter can be passed to the [DummyConvexHull](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/30a2ab38662a8d0b75e1e78ecfec5da89cd25c5c/src/DummyConvexHull.cs#L174-L177) function that allow you to see winner points segments before they gets glued together; these segments are placed in a "debug" dxf layer
+An optional debug parameter can be passed to the [BPoly](https://github.com/SearchAThing-old1/SearchAThing.Sci/blob/956715f078ec598e2a4c972b63579aa18d130e2f/src/DummyConvexHull.cs#L174-L177) function that allow you to see winner points segments before they gets glued together; these segments are placed in a "debug" dxf layer
 
 ![img](/doc/Example08_01.PNG)
 
