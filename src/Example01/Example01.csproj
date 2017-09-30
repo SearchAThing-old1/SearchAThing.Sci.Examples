@@ -82,7 +82,7 @@
       <HintPath>..\..\packages\SearchAThing.Core.1.0.0-CI00004\lib\net46\SearchAThing.Core.dll</HintPath>
     </Reference>
     <Reference Include="SearchAThing.Sci, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SearchAThing.Sci.1.0.0-CI00013\lib\net46\SearchAThing.Sci.dll</HintPath>
+      <HintPath>..\..\packages\SearchAThing.Sci.1.0.0-CI00012\lib\net46\SearchAThing.Sci.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
